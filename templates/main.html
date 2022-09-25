@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script type="text/babel" data-presets="react,stage-3">
+
+        const styles = {
+            mainContainer: {
+                display: "flex",
+                alignItems: 'center',
+                justifyContent: 'space-around',
+                width: '80%',
+                alignSelf: 'center',
+                backgroundColor: 'white',
+                padding: '20px',
+                borderRadius: '20px',
+                flexDirection: 'column'
+            },
+            subContainer: {
+                display: "flex",
+                alignItems: 'center',
+                justifyContent: 'space-around',
+                flexDirection: 'row',
+                width: '100%'
+            },
+            csvContainer: {
+                height: '300px',
+                overflowY: 'scroll'
+            }
+
+        }
+
+
+        const Main = () => {
+
+            const [currentFile, setCurrentFile] = React.useState("");
+            const [csvStats, setcsvStats] = React.useState(null)
+            const [csvList, setcsvList] = React.useState([])
+            const [currentCSV, setCurrentCSV] = React.useState(null)
+            const [email, setEmai] = React.useState("")
+            const [generateLoader, setGenerateLoader] = React.useState(false)
+            const generateCSVFile = () => {
+                fetch("/generateCSV").then((response) => response.json()).then((json) => {
+                    setcsvStats(json)
+                    temp = csvList
+                    temp.push(json.Filename)
+                    setcsvList([...temp])
+                })
+            }
+            const getCsvList = () => {
+                setGenerateLoader()
+                fetch("getCSVList").then((response) => response.json()).then((json) => {
+                    setcsvList(json)
+                    setGenerateLoader(false)
+
+                })
+            }
+
+            const sendEmail = () => {
+                if (validateEmail(email) && currentCSV != null) {
+                    fetch("/fireEmail", {
+                        method: 'POST',
+                        body: JSON.stringify({ email: email, filename: currentCSV }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then((response) => response.json()).then((json) =>alert("Email sent"))
+                } else {
+                    alert("Verify Email and CSV selection")
+                }
+
+            }
+
+            const validateEmail = (email) => {
+                return email.match(
+                    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                );
+            };
+
+            React.useEffect(() => {
+                getCsvList()
+            }, [])
+
+
+            return (
+                <div style={styles.mainContainer}>
+                    <div className="logo-container">
+                        <img src="https://stori-bucket.s3.us-east-1.amazonaws.com/email-assets/logo.9a85efb3-2.svg" />
+                    </div>
+                    <div style={styles.subContainer}>
+                        <div>
+                            <h3>Generate CSV File</h3>
+                            {(csvStats) ? (<div key={"a"}><ul><li>Number of transactions generated: {csvStats.Transactions}</li><li>Filename: {csvStats.Filename}</li></ul></div>) : null}
+                            <div  className={"uk-spinner"}></div>
+                            <button disabled={generateLoader} className="uk-button uk-button-primary"  onClick={() => generateCSVFile()}>Click to generate </button>
+                        </div>
+                        <div>
+                            <h3>Files Generated</h3>
+                            <p>Here you can select any of the CSV generated</p>
+                            {(csvList) ? (<div className={"uk-panel-scrollable"} style={styles.csvContainer}>
+                                {
+                                    csvList.map((value, key) => {
+                                        return <div><label key={"label" + key}><input onChange={(event) => setCurrentCSV(value)} key={"input" + key} type="radio" name="radio1" />{value}</label></div>
+                                    })
+                                }
+                            </div>) : null}
+                            <div>
+                                <input className={"uk-input"} placeholder={"Email"} onChange={(event) => setEmai(event.target.value)} type="email" /><br/>
+                                <div>
+                                    <button className="uk-button uk-button-primary uk-margin" onClick={() => window.open("/downloadCSV/" + currentCSV, '_blank')}>Download CSV</button>    
+                                </div>
+                                <div >
+                                    <button className="uk-button uk-button-primary" onClick={() => sendEmail()}>Send Email</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>)
+        };
+
+        ReactDOM.render(<Main />, document.getElementById("root"));
+    </script>
+    <script src="https://unpkg.com/@babel/standalone@7.10.3/babel.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- UIkit CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.15.10/dist/css/uikit.min.css" />
+
+<!-- UIkit JS -->
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.15.10/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.15.10/dist/js/uikit-icons.min.js"></script>
+</head>
+
+<body
+    style="
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+align-items: center;
+justify-content: center; padding: 20px;background: linear-gradient(90deg, rgba(0,180,172,1) 0%, rgba(0,140,153,1) 100%, rgba(0,212,255,1) 100%);">
+    <div id="root" style="display: flex;
+    align-items: center;
+    justify-content: center; padding: 20px"></div>
+</body>
+
+</html>

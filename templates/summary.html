@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Stori Card Summary</title>
+    <style>
+        body {
+            text-align: center;
+            padding: 20px;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+            background: linear-gradient(90deg, rgba(0,180,172,1) 0%, rgba(0,140,153,1) 100%, rgba(0,212,255,1) 100%);
+            align-items: center;
+            justify-content: center;
+            display: flex;
+        }
+
+        .logo-container {
+            text-align: center;
+        }
+
+        .email-message {
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+        .email-container{
+            width: 70%;
+            align-self: center;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+
+        }
+        table, th, td{
+            border: 1px solid rgba(0,180,172,1);
+            border-collapse: collapse;
+            
+
+
+        }
+        .table-email{
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="email-container">
+        <div class="logo-container">
+            <img src="https://stori-bucket.s3.us-east-1.amazonaws.com/email-assets/logo.9a85efb3-2.svg" />
+        </div>
+        <div class="email-message">
+            <p>Hello, here is your account summary: </p>
+        </div>
+        <div>
+            <h2>Total Balance: ${{total_balance}}</h2>
+            <h3>Number of transactions</h3>
+            <table style="width:100%">
+                <thead>
+                    <th>Month</th>
+                    <th>Number of transactions</th>
+                </thead>
+                
+                <tbody>
+
+                    {% for Month in balance_month.items() %}
+                    <tr>   
+                    <td>{{Month[0]}}</td>
+                        <td>{{Month[1]}}</td>
+                        </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h3>Average Credit/Debit amounts</h3>
+                    {{average_credit|safe}}
+        </div>
+    </div>
+</body>
+
+</html>
