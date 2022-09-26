@@ -68,12 +68,12 @@ def get_random_string(length):
 
 @app.route("/email")
 def sendEmail(html, email):
-    app.config['MAIL_SERVER']='smtp.hostinger.com'
-    app.config['MAIL_PORT'] = 465
-    app.config['MAIL_USERNAME'] = 'dev@dogker.xyz'
-    app.config['MAIL_PASSWORD'] = 'cehxuk-paxqec-sowHo3'
+    app.config['MAIL_SERVER']='smtp-relay.sendinblue.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USERNAME'] = 'luisenriquecfr@me.com'
+    app.config['MAIL_PASSWORD'] = 'OKUFA5MzBpW64Qjv'
     app.config['MAIL_USE_TLS'] = False
-    app.config['MAIL_USE_SSL'] = True
+    app.config['MAIL_USE_SSL'] = False
     mail = Mail(app)
 
     msg = Message('Stori Account Summary', sender = 'dev@dogker.xyz', recipients = [email])
